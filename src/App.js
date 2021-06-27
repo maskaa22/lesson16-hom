@@ -1,23 +1,35 @@
-import logo from './logo.svg';
+
 import './App.css';
+import {useEffect, useState} from "react";
+import Posts from "./components/posts/Posts";
+import {getPost, getPosts} from "./servises/API";
+import PostDetails from "./components/postDetails/PostDetails";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  let [posts, setPosts] = useState([]);
+    useEffect(()=> {
+        getPosts().then(respons => {
+            setPosts(respons.data);
+
+        })
+    } ,[]);
+
+    let [postDetails, setPostDetails] = useState(null);
+
+    function selectPost(id){
+        console.log(id);
+        getPost(id).then(({data}) => {
+            setPostDetails(data)
+        });
+    }
+
+    return (
+    <div>
+        <Posts items={posts} selectPost={selectPost}/>
+        <hr/>
+        {
+            postDetails && <PostDetails item={postDetails}/>
+        }
     </div>
   );
 }
